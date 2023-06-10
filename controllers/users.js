@@ -20,24 +20,27 @@ const createUser = (req, res, next) => {
       } else if (e.code === 11000) {
         next(new Error('Пользователь с таким email уже зарегистрирован'));
       } else {
-        console.log(e);
+        next(e);
       }
     });
 };
 
 const getUserInfo = (req, res, next) => {
-  console.log(req.user);
   const { _id } = req.user;
+  console.log(req.user);
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        console.log('пользователь не найден');
-        return;
+        throw new Error('Пользователь не найден');
       }
       res.send(user);
     })
     .catch((e) => {
-      console.log(e);
+      if (e.name === 'CastError') {
+        next(new Error('Переданы неправильные данные'));
+      } else {
+        next(e);
+      }
     });
 };
 
@@ -46,8 +49,7 @@ const updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        console.log('пользователь не найден');
-        return;
+        throw new Error('Пользователь не найден');
       }
       res.send(user);
     })
@@ -55,7 +57,7 @@ const updateUserInfo = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(new Error('Переданы неправильные данные'));
       } else {
-        console.log(e);
+        next(e);
       }
     });
 };
