@@ -1,11 +1,10 @@
 const bcrypt = require('bcryptjs');
-// const jwt = require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 
-// const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 const createUser = (req, res, next) => {
-  console.log(req.body);
   const { name, email } = req.body;
   bcrypt
     .hash(req.body.password, 10)
@@ -27,6 +26,7 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
+  console.log(req.user);
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
@@ -60,4 +60,30 @@ const updateUserInfo = (req, res, next) => {
     });
 };
 
-module.exports = { getUserInfo, createUser, updateUserInfo };
+const login = (req, res, next) => {
+  const { email, password } = req.body;
+  return User.findUserByCredentials({ email, password })
+    .then((user) => {
+      if (!user) {
+        throw new Error('Пользователь не найден');
+      } else {
+        res.status(200).send({
+          token: jwt.sign(
+            { _id: user._id },
+            NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+            {
+              expiresIn: '7d',
+            },
+          ),
+        });
+      }
+    })
+    .catch(next);
+};
+
+module.exports = {
+  getUserInfo,
+  createUser,
+  updateUserInfo,
+  login,
+};

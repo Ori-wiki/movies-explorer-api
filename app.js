@@ -3,9 +3,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const process = require('process');
 const cors = require('cors');
-
-// const users = require('./routes/users');
-const { createUser } = require('./controllers/users');
+const auth = require('./routes/auth');
+const users = require('./routes/users');
 
 const app = express();
 
@@ -19,6 +18,7 @@ mongoose.connect(DB_URL, {
 app.use(cors());
 app.use(express.json());
 
-app.post('/signup', createUser);
+app.use('/', auth);
+app.use('/', users);
 
 app.listen(PORT);
