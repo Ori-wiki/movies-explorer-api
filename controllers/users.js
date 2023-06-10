@@ -31,6 +31,7 @@ const getUserInfo = (req, res, next) => {
     .then((user) => {
       if (!user) {
         console.log('пользователь не найден');
+        return;
       }
       res.send(user);
     })
@@ -39,4 +40,23 @@ const getUserInfo = (req, res, next) => {
     });
 };
 
-module.exports = { getUserInfo, createUser };
+const updateUserInfo = (req, res, next) => {
+  const { name, email } = req.body;
+  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
+    .then((user) => {
+      if (!user) {
+        console.log('пользователь не найден');
+        return;
+      }
+      res.send(user);
+    })
+    .catch((e) => {
+      if (e.name === 'ValidationError') {
+        next(new Error('Переданы неправильные данные'));
+      } else {
+        console.log(e);
+      }
+    });
+};
+
+module.exports = { getUserInfo, createUser, updateUserInfo };
