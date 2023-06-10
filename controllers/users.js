@@ -26,7 +26,6 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  console.log(req);
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
@@ -46,7 +45,8 @@ const getUserInfo = (req, res, next) => {
 
 const updateUserInfo = (req, res, next) => {
   const { name, email } = req.body;
-  User.findByIdAndUpdate(req.user._id, { name, email }, { new: true, runValidators: true })
+  const { _id } = req.user;
+  User.findByIdAndUpdate(_id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
         throw new Error('Пользователь не найден');
