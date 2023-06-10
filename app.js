@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const { errors } = require('celebrate');
 const process = require('process');
 const cors = require('cors');
+const autoAuth = require('./middlewares/auth');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
 const errorHandler = require('./middlewares/errorHandler');
@@ -19,6 +20,8 @@ mongoose.connect(DB_URL, {
 
 app.use(cors());
 app.use(express.json());
+
+app.use(autoAuth);
 
 app.use('/', auth);
 app.use('/', users);
