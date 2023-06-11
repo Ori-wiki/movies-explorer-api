@@ -3,16 +3,20 @@ const AuthError = require('../errors/AuthError');
 
 const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
 
-const extractBearerToken = (header) => header.replace('Bearer ', '');
+// const extractBearerToken = (header) => header.replace('Bearer ', '');
 
 module.exports = (req, res, next) => {
-  const { authorization } = req.headers;
+  // const { authorization } = req.headers;
+  // if (!authorization || !authorization.startsWith('Bearer ')) {
+  //   return next(new AuthError('Пользователь не авторизован!'));
+  // }
+  // const token = extractBearerToken(authorization);
+  console.log('asd');
+  const token = req.cookies.jwt;
 
-  if (!authorization || !authorization.startsWith('Bearer ')) {
-    return next(new AuthError('Пользователь не авторизован!'));
+  if (!token) {
+    throw new AuthError('Необходима авторизация.');
   }
-  // const token = authorization.replace("Bearer ", "");
-  const token = extractBearerToken(authorization);
   let payload;
 
   try {

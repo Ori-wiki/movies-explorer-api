@@ -28,6 +28,7 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
+  console.log('qwe');
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
@@ -71,15 +72,29 @@ const login = (req, res, next) => {
       if (!user) {
         throw new NotFoundError('Пользователь не найден');
       } else {
-        res.status(200).send({
-          token: jwt.sign(
-            { _id: user._id },
-            NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
-            {
-              expiresIn: '7d',
-            },
-          ),
-        });
+        const token = jwt.sign(
+          { _id: user._id },
+          NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
+          {
+            expiresIn: '7d',
+          },
+        );
+        res
+          .cookie('jwt', token, {
+            maxAge: 3600000,
+            httpOnly: true,
+            sameSite: true,
+          })
+          .send(user.toJSON());
+        // res.status(200).send({
+        //   token: jwt.sign(
+        //     { _id: user._id },
+        //     NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
+        //     {
+        //       expiresIn: '7d',
+        //     },
+        //   ),
+        // });
       }
     })
     .catch(next);
