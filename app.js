@@ -7,6 +7,7 @@ const cors = require('cors');
 const autoAuth = require('./middlewares/auth');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
+const movies = require('./routes/movies');
 const errorHandler = require('./middlewares/errorHandler');
 
 const app = express();
@@ -21,10 +22,11 @@ mongoose.connect(DB_URL, {
 app.use(cors());
 app.use(express.json());
 
+app.use('/', auth);
 app.use(autoAuth);
 
-app.use('/', auth);
 app.use('/', users);
+app.use('/', movies);
 
 app.use(errors());
 
