@@ -99,10 +99,12 @@ const login = (req, res, next) => {
     })
     .catch(next);
 };
+const singout = (req, res) => res.cookie('jwt', { expires: Date.now() }).send({ message: 'Токен удалён' });
 
 module.exports = {
   getUserInfo,
   createUser,
   updateUserInfo,
   login,
+  singout,
 };
