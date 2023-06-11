@@ -10,6 +10,7 @@ const auth = require('./routes/auth');
 const users = require('./routes/users');
 const movies = require('./routes/movies');
 const errorHandler = require('./middlewares/errorHandler');
+const NotFoundError = require('./errors/NotFoundError');
 const { limiter } = require('./middlewares/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
@@ -36,6 +37,9 @@ app.use(autoAuth);
 
 app.use('/', users);
 app.use('/', movies);
+app.use('*', (req, res, next) => {
+  next(new NotFoundError('Запрашиваемая страница не найдена'));
+});
 
 app.use(errorLogger);
 

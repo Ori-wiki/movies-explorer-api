@@ -1,4 +1,5 @@
 const { celebrate, Joi } = require('celebrate');
+const BadRequestError = require('../errors/BadRequestError');
 
 const regex = /^(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/im;
 const en = /^[-a-zA-Z0-9@:%._+~#=/ ]+$/;
@@ -37,7 +38,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new Error('Неправильный формат URL адреса');
+          throw new BadRequestError('Неправильный формат URL адреса');
         }
         return value;
       }),
@@ -45,7 +46,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new Error('Неправильный формат URL адреса');
+          throw new BadRequestError('Неправильный формат URL адреса');
         }
         return value;
       }),
@@ -53,7 +54,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new Error('Неправильный формат URL адреса');
+          throw new BadRequestError('Неправильный формат URL адреса');
         }
         return value;
       }),
@@ -64,7 +65,7 @@ const createMovieValidation = celebrate({
       .max(30)
       .custom((value) => {
         if (!ru.test(value)) {
-          throw new Error('Название фильма должно быть на русском');
+          throw new BadRequestError('Название фильма должно быть на русском');
         }
         return value;
       }),
@@ -74,7 +75,7 @@ const createMovieValidation = celebrate({
       .max(30)
       .custom((value) => {
         if (!en.test(value)) {
-          throw new Error('Название фильма должно быть на английском');
+          throw new BadRequestError('Название фильма должно быть на английском');
         }
         return value;
       }),

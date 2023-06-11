@@ -1,4 +1,7 @@
 const Movie = require('../models/movie');
+const NotFoundError = require('../errors/NotFoundError');
+const BadRequestError = require('../errors/BadRequestError');
+const IdError = require('../errors/IdError');
 
 const getMovies = (req, res, next) => {
   Movie.find({})
@@ -38,7 +41,7 @@ const createMovie = (req, res, next) => {
     .then((movie) => res.status(201).send(movie))
     .catch((e) => {
       if (e.name === 'ValidationError') {
-        next(new Error('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(e);
       }
@@ -49,9 +52,9 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(_id)
     .then((movie) => {
       if (!movie) {
-        throw new Error('Фильм не найден');
+        throw new NotFoundError('Фильм не найден');
       } else if (movie.owner.valueOf() !== req.user._id) {
-        throw new Error('Можно удалять только свои фильмы');
+        throw new IdError('Можно удалять только свои фильмы');
       } else {
         Movie.findByIdAndRemove(_id)
           .then((deletedMovie) => {
@@ -64,7 +67,7 @@ const deleteMovie = (req, res, next) => {
     })
     .catch((e) => {
       if (e.name === 'CastError') {
-        next(new Error('Переданы некорректные данные'));
+        next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(e);
       }
