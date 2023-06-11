@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
-const cors = require('cors');
+const cors = require('./middlewares/cors');
 const autoAuth = require('./middlewares/auth');
 const auth = require('./routes/auth');
 const users = require('./routes/users');
@@ -23,7 +23,7 @@ mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : MONGO_URL_DEV, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-app.use(cors());
+app.use(cors);
 app.use(cookieParser());
 app.use(helmet());
 app.disable('x-powered-by');
