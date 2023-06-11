@@ -9,6 +9,7 @@ const auth = require('./routes/auth');
 const users = require('./routes/users');
 const movies = require('./routes/movies');
 const errorHandler = require('./middlewares/errorHandler');
+const { limiter } = require('./middlewares/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 
 const app = express();
@@ -24,6 +25,8 @@ app.use(cors());
 app.use(express.json());
 
 app.use(requestLogger);
+
+app.use(limiter);
 
 app.use('/', auth);
 app.use(autoAuth);
