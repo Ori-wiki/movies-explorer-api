@@ -4,8 +4,7 @@ const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const MangoEmailError = require('../errors/MangoEmailError');
-
-const { NODE_ENV, JWT_SECRET } = process.env;
+const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
 
 const createUser = (req, res, next) => {
   const { name, email } = req.body;
@@ -75,7 +74,7 @@ const login = (req, res, next) => {
         res.status(200).send({
           token: jwt.sign(
             { _id: user._id },
-            NODE_ENV === 'production' ? JWT_SECRET : 'some-secret-key',
+            NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
             {
               expiresIn: '7d',
             },

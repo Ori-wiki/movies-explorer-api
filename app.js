@@ -3,7 +3,6 @@ const express = require('express');
 const mongoose = require('mongoose');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
-const process = require('process');
 const cors = require('cors');
 const autoAuth = require('./middlewares/auth');
 const auth = require('./routes/auth');
@@ -11,14 +10,15 @@ const users = require('./routes/users');
 const movies = require('./routes/movies');
 const errorHandler = require('./middlewares/errorHandler');
 const NotFoundError = require('./errors/NotFoundError');
-const { limiter } = require('./middlewares/limiter');
+const { limiter } = require('./utils/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+const {
+  PORT, NODE_ENV, MONGO_URL, MONGO_URL_DEV,
+} = require('./utils/config');
 
 const app = express();
 
-const { PORT = 3000, DB_URL = 'mongodb://127.0.0.1:27017/bitfilmsdb' } = process.env;
-
-mongoose.connect(DB_URL, {
+mongoose.connect(NODE_ENV === 'production' ? MONGO_URL : MONGO_URL_DEV, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
