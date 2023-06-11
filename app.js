@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
+const helmet = require('helmet');
 const { errors } = require('celebrate');
 const process = require('process');
 const cors = require('cors');
@@ -21,6 +22,8 @@ mongoose.connect(DB_URL, {
   useUnifiedTopology: true,
 });
 
+app.use(helmet());
+app.disable('x-powered-by');
 app.use(cors());
 app.use(express.json());
 
