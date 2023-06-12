@@ -56,9 +56,9 @@ const deleteMovie = (req, res, next) => {
       } else if (movie.owner.valueOf() !== req.user._id) {
         throw new IdError('Можно удалять только свои фильмы');
       } else {
-        Movie.findByIdAndRemove(_id)
-          .then((deletedMovie) => {
-            res.send(deletedMovie);
+        Movie.deleteOne(movie)
+          .then(() => {
+            res.send(movie);
           })
           .catch((e) => {
             next(e);
