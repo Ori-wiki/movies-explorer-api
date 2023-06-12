@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
@@ -17,7 +18,7 @@ const createUser = (req, res, next) => {
     }))
     .then((user) => res.status(201).send(user))
     .catch((e) => {
-      if (e.name === 'ValidationError') {
+      if (e instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы неверные данные'));
       } else if (e.code === 11000) {
         next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
@@ -26,9 +27,7 @@ const createUser = (req, res, next) => {
       }
     });
 };
-
 const getUserInfo = (req, res, next) => {
-  console.log(req.params);
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
@@ -38,7 +37,7 @@ const getUserInfo = (req, res, next) => {
       res.send(user);
     })
     .catch((e) => {
-      if (e.name === 'CastError') {
+      if (e instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Переданы неправильные данные'));
       } else {
         next(e);
@@ -57,7 +56,7 @@ const updateUserInfo = (req, res, next) => {
       res.send(user);
     })
     .catch((e) => {
-      if (e.name === 'ValidationError') {
+      if (e instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы неправильные данные'));
       } else if (e.code === 11000) {
         next(new ConflictError('Такой пользователь уже существует'));

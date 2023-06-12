@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Movie = require('../models/movie');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
@@ -40,7 +41,7 @@ const createMovie = (req, res, next) => {
     .then((card) => card.populate(['owner']))
     .then((movie) => res.status(201).send(movie))
     .catch((e) => {
-      if (e.name === 'ValidationError') {
+      if (e instanceof mongoose.Error.ValidationError) {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(e);
@@ -66,7 +67,7 @@ const deleteMovie = (req, res, next) => {
       }
     })
     .catch((e) => {
-      if (e.name === 'CastError') {
+      if (e instanceof mongoose.Error.CastError) {
         next(new BadRequestError('Переданы некорректные данные'));
       } else {
         next(e);
