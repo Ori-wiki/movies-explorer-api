@@ -4,6 +4,8 @@ const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
 const IdError = require('../errors/IdError');
 
+const { invalidData, elementNotFound, accessError } = require('../utils/constants');
+
 const getMovies = (req, res, next) => {
   Movie.find({ owner: req.user._id })
     .then((movies) => res.send(movies))
@@ -42,7 +44,7 @@ const createMovie = (req, res, next) => {
     .then((movie) => res.status(201).send(movie))
     .catch((e) => {
       if (e instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError(invalidData));
       } else {
         next(e);
       }
@@ -53,9 +55,9 @@ const deleteMovie = (req, res, next) => {
   Movie.findById(_id)
     .then((movie) => {
       if (!movie) {
-        throw new NotFoundError('Фильм не найден');
+        throw new NotFoundError(`Фильм ${elementNotFound}`);
       } else if (movie.owner.valueOf() !== req.user._id) {
-        throw new IdError('Можно удалять только свои фильмы');
+        throw new IdError(accessError);
       } else {
         Movie.deleteOne(movie)
           .then(() => {
@@ -68,7 +70,7 @@ const deleteMovie = (req, res, next) => {
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
-        next(new BadRequestError('Переданы некорректные данные'));
+        next(new BadRequestError(invalidData));
       } else {
         next(e);
       }

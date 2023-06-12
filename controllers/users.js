@@ -7,6 +7,14 @@ const BadRequestError = require('../errors/BadRequestError');
 const ConflictError = require('../errors/ConflictError');
 const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
 
+const {
+  invalidData,
+  emailAlreadyRegistered,
+  elementNotFound,
+  userAlreadyExists,
+  tokenDelete,
+} = require('../utils/constants');
+
 const createUser = (req, res, next) => {
   const { name, email } = req.body;
   bcrypt
@@ -19,9 +27,9 @@ const createUser = (req, res, next) => {
     .then((user) => res.status(201).send(user))
     .catch((e) => {
       if (e instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Переданы неверные данные'));
+        next(new BadRequestError(invalidData));
       } else if (e.code === 11000) {
-        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
+        next(new ConflictError(emailAlreadyRegistered));
       } else {
         next(e);
       }
@@ -32,13 +40,13 @@ const getUserInfo = (req, res, next) => {
   User.findById(_id)
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(`Пользователь ${elementNotFound}`);
       }
       res.send(user);
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.CastError) {
-        next(new BadRequestError('Переданы неправильные данные'));
+        next(new BadRequestError(invalidData));
       } else {
         next(e);
       }
@@ -51,15 +59,15 @@ const updateUserInfo = (req, res, next) => {
   User.findByIdAndUpdate(_id, { name, email }, { new: true, runValidators: true })
     .then((user) => {
       if (!user) {
-        throw new NotFoundError('Пользователь не найден');
+        throw new NotFoundError(`Пользователь ${elementNotFound}`);
       }
       res.send(user);
     })
     .catch((e) => {
       if (e instanceof mongoose.Error.ValidationError) {
-        next(new BadRequestError('Переданы неправильные данные'));
+        next(new BadRequestError(invalidData));
       } else if (e.code === 11000) {
-        next(new ConflictError('Такой пользователь уже существует'));
+        next(new ConflictError(userAlreadyExists));
       } else {
         next(e);
       }
@@ -96,7 +104,7 @@ const login = (req, res, next) => {
     })
     .catch(next);
 };
-const singout = (req, res) => res.cookie('jwt', { expires: Date.now() }).send({ message: 'Токен удалён' });
+const singout = (req, res) => res.cookie('jwt', { expires: Date.now() }).send({ message: tokenDelete });
 
 module.exports = {
   getUserInfo,

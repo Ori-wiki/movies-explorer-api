@@ -2,6 +2,8 @@ const { celebrate, Joi } = require('celebrate');
 const { ObjectId } = require('mongoose').Types;
 const BadRequestError = require('../errors/BadRequestError');
 
+const { wrongUrlFormat, wrongLanguage, invalidData } = require('../utils/constants');
+
 const regex = /^(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/im;
 const en = /^[-a-zA-Z0-9@:%._+~#=/ ]+$/;
 const ru = /^[а-яА-ЯЁё0-9@:%._+~#=/ ]+$/;
@@ -39,7 +41,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new BadRequestError('Неправильный формат URL адреса');
+          throw new BadRequestError(wrongUrlFormat);
         }
         return value;
       }),
@@ -47,7 +49,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new BadRequestError('Неправильный формат URL адреса');
+          throw new BadRequestError(wrongUrlFormat);
         }
         return value;
       }),
@@ -55,7 +57,7 @@ const createMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!regex.test(value)) {
-          throw new BadRequestError('Неправильный формат URL адреса');
+          throw new BadRequestError(wrongUrlFormat);
         }
         return value;
       }),
@@ -66,7 +68,7 @@ const createMovieValidation = celebrate({
       .max(30)
       .custom((value) => {
         if (!ru.test(value)) {
-          throw new BadRequestError('Название фильма должно быть на русском');
+          throw new BadRequestError(`${wrongLanguage} на русском`);
         }
         return value;
       }),
@@ -76,7 +78,7 @@ const createMovieValidation = celebrate({
       .max(30)
       .custom((value) => {
         if (!en.test(value)) {
-          throw new BadRequestError('Название фильма должно быть на английском');
+          throw new BadRequestError(`${wrongLanguage} на английском`);
         }
         return value;
       }),
@@ -88,7 +90,7 @@ const deleteMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!ObjectId.isValid(value)) {
-          throw new BadRequestError('Некорректный id фильма');
+          throw new BadRequestError(invalidData);
         }
         return value;
       }),
