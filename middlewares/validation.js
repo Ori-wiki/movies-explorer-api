@@ -6,14 +6,14 @@ const regex = /^(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,}\.[a-zA-Z0-9(
 const en = /^[-a-zA-Z0-9@:%._+~#=/ ]+$/;
 const ru = /^[а-яА-ЯЁё0-9@:%._+~#=/ ]+$/;
 
-const signIn = celebrate({
+const signInValidation = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(5).max(30),
   }),
 });
 
-const signUp = celebrate({
+const signUpValidation = celebrate({
   body: Joi.object().keys({
     email: Joi.string().required().email(),
     password: Joi.string().required().min(8).max(30),
@@ -93,16 +93,11 @@ const deleteMovieValidation = celebrate({
         return helpers.message('Неккоректный id фильма');
       }),
   }),
-  headers: Joi.object()
-    .keys({
-      authorization: Joi.string().min(2).max(200).required(),
-    })
-    .unknown(),
 });
 
 module.exports = {
-  signUp,
-  signIn,
+  signUpValidation,
+  signInValidation,
   updateUserValidation,
   createMovieValidation,
   deleteMovieValidation,
