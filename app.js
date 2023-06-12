@@ -5,12 +5,8 @@ const cookieParser = require('cookie-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const cors = require('./middlewares/cors');
-const autoAuth = require('./middlewares/auth');
-const auth = require('./routes/auth');
-const users = require('./routes/users');
-const movies = require('./routes/movies');
+const router = require('./routes/index');
 const errorHandler = require('./middlewares/errorHandler');
-const NotFoundError = require('./errors/NotFoundError');
 const { limiter } = require('./utils/limiter');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 const {
@@ -39,14 +35,7 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.use('/', auth);
-app.use(autoAuth);
-
-app.use('/', users);
-app.use('/', movies);
-app.use('*', (req, res, next) => {
-  next(new NotFoundError('Запрашиваемая страница не найдена'));
-});
+app.use(router);
 
 app.use(errorLogger);
 
