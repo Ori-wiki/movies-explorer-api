@@ -1,6 +1,7 @@
 const { celebrate, Joi } = require('celebrate');
 const { ObjectId } = require('mongoose').Types;
 const BadRequestError = require('../errors/BadRequestError');
+const IdError = require('../errors/IdError');
 
 const regex = /^(http|https)?:\/\/(www\.)?[-a-zA-Z0-9@:%._+~#=]{1,}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]*)?$/im;
 const en = /^[-a-zA-Z0-9@:%._+~#=/ ]+$/;
@@ -84,13 +85,13 @@ const createMovieValidation = celebrate({
 });
 const deleteMovieValidation = celebrate({
   params: Joi.object().keys({
-    movieId: Joi.string()
+    _id: Joi.string()
       .required()
-      .custom((value, helpers) => {
-        if (ObjectId.isValid(value)) {
-          return value;
+      .custom((value) => {
+        if (!ObjectId.isValid(value)) {
+          throw new IdError('Некорректное id фильма');
         }
-        return helpers.message('Неккоректный id фильма');
+        return value;
       }),
   }),
 });
