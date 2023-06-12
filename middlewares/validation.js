@@ -88,7 +88,7 @@ const deleteMovieValidation = celebrate({
       .required()
       .custom((value) => {
         if (!ObjectId.isValid(value)) {
-          throw new BadRequestError('Некорректное id фильма');
+          throw new BadRequestError('Некорректный id фильма');
         }
         return value;
       }),
