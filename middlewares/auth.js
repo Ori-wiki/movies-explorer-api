@@ -11,11 +11,10 @@ module.exports = (req, res, next) => {
   //   return next(new AuthError('Пользователь не авторизован!'));
   // }
   // const token = extractBearerToken(authorization);
-  console.log('asd');
   const token = req.cookies.jwt;
 
   if (!token) {
-    throw new AuthError('Необходима авторизация.');
+    return next(new AuthError('Необходима авторизация.'));
   }
   let payload;
 
