@@ -4,8 +4,8 @@ const BadRequestError = require('../errors/BadRequestError');
 const IdError = require('../errors/IdError');
 
 const getMovies = (req, res, next) => {
-  Movie.find({})
-    .then((movie) => res.send(movie))
+  Movie.find({ owner: req.user._id })
+    .then((movies) => res.send(movies))
     .catch(next);
 };
 
