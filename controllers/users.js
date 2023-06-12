@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const NotFoundError = require('../errors/NotFoundError');
 const BadRequestError = require('../errors/BadRequestError');
-const MangoEmailError = require('../errors/MangoEmailError');
+const ConflictError = require('../errors/ConflictError');
 const { NODE_ENV, JWT_SECRET, JWT_SECRET_DEV } = require('../utils/config');
 
 const createUser = (req, res, next) => {
@@ -20,7 +20,7 @@ const createUser = (req, res, next) => {
       if (e.name === 'ValidationError') {
         next(new BadRequestError('Переданы неверные данные'));
       } else if (e.code === 11000) {
-        next(new MangoEmailError('Пользователь с таким email уже зарегистрирован'));
+        next(new ConflictError('Пользователь с таким email уже зарегистрирован'));
       } else {
         next(e);
       }
@@ -28,7 +28,6 @@ const createUser = (req, res, next) => {
 };
 
 const getUserInfo = (req, res, next) => {
-  console.log('qwe');
   const { _id } = req.user;
   User.findById(_id)
     .then((user) => {
@@ -59,6 +58,8 @@ const updateUserInfo = (req, res, next) => {
     .catch((e) => {
       if (e.name === 'ValidationError') {
         next(new BadRequestError('Переданы неправильные данные'));
+      } else if (e.code === 11000) {
+        next(new ConflictError('Такой пользователь уже существует'));
       } else {
         next(e);
       }
@@ -69,33 +70,29 @@ const login = (req, res, next) => {
   const { email, password } = req.body;
   return User.findUserByCredentials({ email, password })
     .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Пользователь не найден');
-      } else {
-        const token = jwt.sign(
-          { _id: user._id },
-          NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
-          {
-            expiresIn: '7d',
-          },
-        );
-        res
-          .cookie('jwt', token, {
-            maxAge: 3600000,
-            httpOnly: true,
-            sameSite: true,
-          })
-          .send(user.toJSON());
-        // res.status(200).send({
-        //   token: jwt.sign(
-        //     { _id: user._id },
-        //     NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
-        //     {
-        //       expiresIn: '7d',
-        //     },
-        //   ),
-        // });
-      }
+      const token = jwt.sign(
+        { _id: user._id },
+        NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
+        {
+          expiresIn: '7d',
+        },
+      );
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000,
+          httpOnly: true,
+          sameSite: true,
+        })
+        .send(user.toJSON());
+      // res.status(200).send({
+      //   token: jwt.sign(
+      //     { _id: user._id },
+      //     NODE_ENV === 'production' ? JWT_SECRET : JWT_SECRET_DEV,
+      //     {
+      //       expiresIn: '7d',
+      //     },
+      //   ),
+      // });
     })
     .catch(next);
 };
