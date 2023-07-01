@@ -27,10 +27,10 @@ const movieSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      validate: {
-        validator: (v) => isURL(v),
-        message: wrongUrlFormat,
-      },
+      // validate: {
+      //   validator: (v) => isURL(v),
+      //   message: wrongUrlFormat,
+      // },
       required: [true, `Поле "image" ${mustFilled}`],
     },
     trailerLink: {
@@ -41,22 +41,22 @@ const movieSchema = new mongoose.Schema(
       },
       required: [true, `Поле "trailerLink" ${mustFilled}`],
     },
-    thumbnail: {
-      type: String,
-      validate: {
-        validator: (v) => isURL(v),
-        message: wrongUrlFormat,
-      },
-      required: [true, `Поле "thumbnail" ${mustFilled}`],
-    },
+    // thumbnail: {
+    //   type: String,
+    //   validate: {
+    //     validator: (v) => isURL(v),
+    //     message: wrongUrlFormat,
+    //   },
+    //   required: [true, `Поле "thumbnail" ${mustFilled}`],
+    // },
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'user',
       required: [true, `Поле "owner" ${mustFilled}`],
     },
-    movieId: {
+    id: {
       type: Number,
-      required: [true, `Поле "movieId" ${mustFilled}`],
+      required: [true, `Поле "id" ${mustFilled}`],
     },
     nameRU: {
       type: String,
