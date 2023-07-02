@@ -14,17 +14,7 @@ const getMovies = (req, res, next) => {
 
 const createMovie = (req, res, next) => {
   const {
-    country,
-    director,
-    duration,
-    year,
-    description,
-    image,
-    trailerLink,
-    nameRU,
-    nameEN,
-    thumbnail,
-    movieId,
+    country, director, duration, year, description, image, trailerLink, nameRU, nameEN, id,
   } = req.body;
   Movie.create({
     country,
@@ -36,8 +26,7 @@ const createMovie = (req, res, next) => {
     trailerLink,
     nameRU,
     nameEN,
-    thumbnail,
-    movieId,
+    id,
     owner: req.user._id,
   })
     .then((card) => card.populate(['owner']))
