@@ -3,6 +3,8 @@ const allowedCors = [
   'https://localhost:3000',
   'http://localhost:3001',
   'https://localhost:3001',
+  'http://muda.nomoredomains.rocks',
+  'https://muda.nomoredomains.rocks',
 ];
 
 const DEFAULT_ALLOWED_METHODS = 'GET,HEAD,PUT,PATCH,POST,DELETE';
