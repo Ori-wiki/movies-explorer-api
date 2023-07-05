@@ -24,7 +24,7 @@ const signUpValidation = celebrate({
 const updateUserValidation = celebrate({
   body: Joi.object().keys({
     name: Joi.string().required().min(2).max(40),
-    email: Joi.string().required().min(2).max(40),
+    email: Joi.string().required().email(),
   }),
 });
 
